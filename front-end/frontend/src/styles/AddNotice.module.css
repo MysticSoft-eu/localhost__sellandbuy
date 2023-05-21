@@ -1,0 +1,25 @@
+.addNoticeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 400px; /* Adjust this value to fit your desired width */
+  margin: 1rem auto;
+  padding: 1rem;
+  border: none;
+  background-color: #f8f9fa;
+  color: black;
+  font-size: 1rem;
+
+  transition: background-color 0.3s ease;
+}
+
+.addNoticeButton:hover {
+  background-color: #f8f9;
+  transform: scale(1.05);
+}
+
+.addNoticeIcon {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Example Listing 1",
+    "description": "This is an example listing description.",
+    "price": "$100",
+    "city": "New York",
+    "image": "https://example.com/image1.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Example Listing 2",
+    "description": "This is another example listing description.",
+    "price": "$200",
+    "city": "Los Angeles",
+    "image": "https://example.com/image2.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Example Listing 3",
+    "description": "Yet another example listing description.",
+    "price": "$150",
+    "city": "Chicago",
+    "image": "https://example.com/image3.jpg"
+  },
+  {
+    "id": 4,
+    "name": "Example Listing 4",
+    "description": "Another example listing description here.",
+    "price": "$180",
+    "city": "San Francisco",
+    "image": "https://example.com/image4.jpg"
+  },
+  {
+    "id": 5,
+    "name": "Example Listing 5",
+    "description": "Some description for the fifth example listing.",
+    "price": "$120",
+    "city": "Miami",
+    "image": "https://example.com/image5.jpg"
+  }
+]
