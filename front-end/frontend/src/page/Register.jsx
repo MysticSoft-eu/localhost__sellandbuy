@@ -30,7 +30,7 @@ export default function RegisterPage() {
 
   return (
     <div>
-      <Navbar />
+      
       <div className={styles.container}>
         <h2 className={styles.title}>Register</h2>
         <form onSubmit={handleRegister} className={styles.form}>

@@ -1,7 +1,7 @@
 import {Link, Navigate} from "react-router-dom";
 import {useContext, useState} from "react";
 import {UserContext} from "../UserContext.jsx";
-import Navbar from "../components/Navbar";
+
 import styles from '../styles/Login.module.css';
 import axios from "axios";
 export default function Login() {
@@ -31,7 +31,7 @@ export default function Login() {
 
   return (
     <div>
-      <Navbar />
+      
       <div className={styles.container}>
         <h2 className={styles.title}>Login</h2>
         <form onSubmit={handleLoginSubmit} className={styles.form}>

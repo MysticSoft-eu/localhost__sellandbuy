@@ -20,7 +20,7 @@ const Navbar = () => {
         <Link to="/cart" className={styles.iconLink}>
           <FaShoppingCart className={styles.icon} />
         </Link>
-        <Link to="/login" className={styles.iconLink}>
+        <Link to={user?'account': "/login"} className={styles.iconLink}>
           <FaUserCircle className={styles.icon} />
           {!!user && (user.name)}
         </Link>

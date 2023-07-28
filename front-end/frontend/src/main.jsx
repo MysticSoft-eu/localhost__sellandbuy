@@ -1,30 +1,13 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { createRoot } from "react-dom/client";
-import App from "./App";
-import Login from "./page/Login";
-import "./index.css";
-import Register from "./page/Register";
-import axios from "axios";
-import { UserContextProvider } from "./UserContext";
-axios.defaults.baseURL = "http://127.0.0.1:3000";
-axios.defaults.withCredentials = true;
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.jsx'
+import './index.css'
+import {BrowserRouter} from "react-router-dom";
 
-createRoot(document.getElementById("root")).render(
-
-
-
-   <UserContextProvider>
-    <Router>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-       
-      </Routes>
-    </Router>
-    </UserContextProvider>
-
-  
-
-);
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>,
+)

@@ -1,27 +1,42 @@
 import React from "react";
-import Navbar from "./components/Navbar";
-import Searchbar from "./components/Searchbar";
-import Category from "./components/Category";
-import AddNotice from "./components/AddNotice";
-import LatestListings from "./components/LatestListings";
-import "./App.css";
-import axios from "axios";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import './index.css'
 
-axios.defaults.baseURL = "http://localhost:3000";
+import Layout from "./Layout";
+import Login from "./page/Login";
+import "./index.css";
+import Register from "./page/Register";
+import AccountPage from "./page/Account";
+import IndexPage from "./page/indexPage";
+import axios from "axios";
+import { UserContextProvider } from "./UserContext";
+import AddItem from "./page/AddItem";
+import UpdateItem from "./page/UpdateItem";
+import ItemPage from "./page/ItemPage";
+import CategoryManager from "./page/CategoryManager";
+axios.defaults.baseURL = 'http://127.0.0.1:3000';
+axios.defaults.withCredentials = true;
+
 
 function App() {
-  return (
-    <div className="App">
-      <div className="navbar-wrapper">
-        <Navbar />
-      </div>
-      <div className="main-content">
-        <Searchbar />
-        <Category />
-        <AddNotice />
-        <LatestListings />
-      </div>
-    </div>
+  return (  
+  <UserContextProvider>
+    
+      <Routes>
+      
+       <Route path="/" element={<Layout />}>
+        <Route index element={<IndexPage/>} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/account/:subpage?" element={<AccountPage />} />
+        <Route path="/uploader/:id" element={<UpdateItem />} />
+        <Route path="/additem" element={<AddItem />} />
+        <Route path="/itempage/:id" element={<ItemPage />} />
+        <Route path="/categorymanager" element={<CategoryManager />} />
+       </Route>
+      </Routes>
+   
+  </UserContextProvider>
   );
 }
 

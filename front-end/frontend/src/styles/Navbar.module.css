@@ -4,10 +4,15 @@
   align-items: center;
   height: 40px; /* Adjust this value to set the height */
   width: 100%;
+  z-index: 10;
+  position: sticky;
+  top: 0;
+
   padding: 1rem;
   background-color: #f8f9fa;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
 }
+
 
 .title {
   font-size: 1.5rem;

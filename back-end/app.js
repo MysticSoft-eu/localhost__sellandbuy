@@ -4,24 +4,32 @@ const mongoose = require('mongoose');
 const bcryct = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const fs = require('fs');
+const path = require('path');
+const util = require('util');
 const app = express();
+const Item = require('./models/item');
 const dotenv = require("dotenv");
 const User = require('./models/User');
 const { HostAddress } = require('mongodb');
-
+const multer = require('multer');
+const router = express.Router();
+const Category = require('./models/Category');
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+    
+}));
 
 const bcryctSalt = bcryct.genSaltSync(10);
 dotenv.config();
 mongoose.connect(process.env.MONGO_URL);
 
 
+app.use('/uploads', express.static('uploads'))
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-    credentials: true,
-    origin: 'http://localhost:5173',
-}));
 
 
 app.get('/test', (req, res) => {
@@ -29,6 +37,7 @@ app.get('/test', (req, res) => {
 }); 
 
 app.post('/register', async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
     const {name, email, password} = req.body;
     try{
    
@@ -44,15 +53,22 @@ app.post('/register', async (req, res) => {
     }
 });
 app.post('/login', async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
     const { email, password} = req.body;
     const userDoc = await User.findOne({email});
     if(userDoc){
       const passok = bcryct.compareSync(password, userDoc.password);
 
         if(passok){
-         jwt.sign({email:userDoc ,id: userDoc._id,name:userDoc }, process.env.JWT_SECRET, {},(err, token) => {
+         jwt.sign(
+            {
+            email:userDoc.email ,
+            id: userDoc._id,
+            name:userDoc.name 
+        }, 
+        process.env.JWT_SECRET, {},(err, token) => {
             if(err) throw err;
-            res.cookie('token',token,{ sameSite: 'none', secure: true }).json(userDoc);
+            res.cookie('token',token,{ sameSite: 'none', secure: true}).json(userDoc);
 
         });
 
@@ -66,20 +82,118 @@ app.post('/login', async (req, res) => {
      
 });
 
-app.get('/profile', (req, res) => {
-   
+app.get('/profile', (req,res) => {
+    mongoose.connect(process.env.MONGO_URL);
     const {token} = req.cookies;
-    if(token){
-        jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-            if(err) throw err;
-            res.json(user);
-        });
+    if (token) {
+      jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
+        if (err) throw err;
+        const {name,email,_id} = await User.findById(userData.id);
+        res.json({name,email,_id});
+      });
+    } else {
+      res.json(null);
     }
+  });
 
-  
-   
+  app.get('/logout', (req, res) => {
+    res.clearCookie('token',{ sameSite: 'none', secure: true});  // This clears the cookie from the client's browser.
+    res.json({ success: true, message: "You are now logged out." });
+});
+const photosMiddleware = multer({ dest: 'uploads/' });
+
+mongoose.connect(process.env.MONGO_URL);  // Connect to MongoDB once when server starts
+
+app.post('/upload',photosMiddleware.array('photos', 100), (req, res) => {
+  const uploadedFiles = req.files.map(file => {
+    const ext = file.originalname.split('.').pop();
+    const newPath = `${file.path}.${ext}`;
+    fs.renameSync(file.path, newPath);
+    return newPath.replace('uploads\\','');
+  });
+
+  res.json(uploadedFiles);
 });
 
+app.post('/additem', (req, res) => {
+  const {token} = req.cookies;
+  const {title, address, photos, description, price,} = req.body;
+
+  jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
+    if (err) {
+      return res.status(401).json({error: "Invalid token"});
+    }
+
+    
+      const itemDoc = await Item.create({
+        owner: userData.id,
+        title,
+        address,
+        photos,
+        description,
+        price,
+        
+        
+      });
+      res.json(itemDoc);
+    
+      
+    
+  });
+});
+app.get('/user-items', async (req, res) => {
+  const {token} = req.cookies;
+  jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
+    const {id} = userData;
+    res.json(await Item.find({owner:id}));
+  });
+});
+
+app.get('/items/:id', async (req, res) => {
+  const {id} = req.params;
+  res.json(await Item.findById(id));
+
+
+});
+
+app.put('/items/:id', async (req, res) => {
+  const itemId = req.params.id;
+  const itemData = req.body;
+  const {token} = req.cookies;
+  
+  // Get the existing item before updating it
+  const existingItem = await Item.findById(itemId);
+
+  if (!existingItem) {
+    // If item doesn't exist, return 404 error
+    return res.status(404).send({ message: 'Item not found' });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
+    if (userData.id !== existingItem.owner.toString()) {
+      // If not owner, return 403 error (Forbidden)
+      return res.status(403).send({ message: 'You are not allowed to update this item' });
+    }
+    
+    // Find photos to delete
+    const photosToDelete = existingItem.photos.filter(photo => !itemData.photos.includes(photo));
+
+    // Delete photos
+    photosToDelete.forEach(photo => {
+      const photoPath = path.join(__dirname, '/uploads/', photo);
+      fs.unlink(photoPath, err => {
+        if (err) console.error(err);
+      });
+    });
+
+    // Update item
+    const updatedItem = await Item.findByIdAndUpdate(itemId, itemData, { new: true });
+    res.send(updatedItem);
+  });
+});
+app.get('/items', async (req, res) => {
+  res.json(await Item.find({}));
+});
 
 
 
