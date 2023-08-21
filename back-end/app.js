@@ -6,14 +6,12 @@ const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const fs = require('fs');
 const path = require('path');
-const util = require('util');
 const app = express();
 const Item = require('./models/item');
 const dotenv = require("dotenv");
 const User = require('./models/User');
-const { HostAddress } = require('mongodb');
 const multer = require('multer');
-const router = express.Router();
+const bodyParser = require('body-parser');
 const Category = require('./models/Category');
 app.use(cors({
     origin: 'http://localhost:5173',
@@ -27,7 +25,7 @@ mongoose.connect(process.env.MONGO_URL);
 
 
 app.use('/uploads', express.static('uploads'))
-
+app.use(bodyParser.json());
 app.use(express.json());
 app.use(cookieParser());
 
@@ -117,7 +115,7 @@ app.post('/upload',photosMiddleware.array('photos', 100), (req, res) => {
 
 app.post('/additem', (req, res) => {
   const {token} = req.cookies;
-  const {title, address, photos, description, price,} = req.body;
+  const {title, address, photos, description, price, category} = req.body;
 
   jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
     if (err) {
@@ -132,7 +130,7 @@ app.post('/additem', (req, res) => {
         photos,
         description,
         price,
-        
+        category,
         
       });
       res.json(itemDoc);
@@ -155,6 +153,9 @@ app.get('/items/:id', async (req, res) => {
 
 
 });
+
+
+
 
 app.put('/items/:id', async (req, res) => {
   const itemId = req.params.id;
@@ -191,9 +192,133 @@ app.put('/items/:id', async (req, res) => {
     res.send(updatedItem);
   });
 });
-app.get('/items', async (req, res) => {
-  res.json(await Item.find({}));
+app.delete('/items/:id', async (req, res) => {
+  const itemId = req.params.id;
+  const {token} = req.cookies;
+
+  // Get the existing item before deleting it
+  const existingItem = await Item.findById(itemId);
+
+  if (!existingItem) {
+    // If item doesn't exist, return 404 error
+    return res.status(404).send({ message: 'Item not found' });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
+    if (userData.id !== existingItem.owner.toString()) {
+      // If not owner, return 403 error (Forbidden)
+      return res.status(403).send({ message: 'You are not allowed to delete this item' });
+    }
+    
+    // Delete photos
+    existingItem.photos.forEach(photo => {
+      const photoPath = path.join(__dirname, '/uploads/', photo);
+      fs.unlink(photoPath, err => {
+        if (err) console.error(err);
+      });
+    });
+
+    // Delete item
+    await Item.findByIdAndRemove(itemId);
+    res.send({ message: `Item ${itemId} deleted.` });
+  });
 });
+
+
+
+// Helper function to construct the search criteria
+const constructSearchCriteria = (category, search) => {
+  let criteria = { category };
+
+  if (search) {
+      criteria.title = new RegExp(search, 'i');
+  }
+
+  return criteria;
+}
+
+
+app.get('/items', async (req, res) => {
+  const { category, search, city, minPrice, maxPrice, sortPrice } = req.query;
+
+  let searchCriteria = {};
+  let sortQuery = {};
+
+  // Convert price strings to numbers
+  const min = minPrice ? Number(minPrice) : 0;
+  const max = maxPrice ? Number(maxPrice) : Number.POSITIVE_INFINITY;
+
+  if (isNaN(min) || isNaN(max)) {
+    return res.status(400).json({ message: 'Invalid price range' });
+  }
+
+  // Price range filtering
+  searchCriteria.price = {
+    $gte: min,
+    $lte: max
+  };
+
+  // Category filtering
+  if (category && category !== 'all') {
+    searchCriteria.category = category;
+  }
+
+  // Search by title
+  if (search && search !== 'all') {
+    searchCriteria.title = new RegExp(search, 'i'); // 'i' makes it case-insensitive
+  }
+
+  // Search by city
+  if (city) {
+    searchCriteria.address = city; // Assuming the city is stored under the 'address' field in your model
+  }
+
+  // Sorting
+  if (sortPrice === 'asc') {
+    sortQuery = { price: 1 };
+  } else if (sortPrice === 'desc') {
+    sortQuery = { price: -1 };
+  }
+
+  try {
+    const items = await Item.find(searchCriteria).sort(sortQuery); // Added sortQuery here
+    res.json(items);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+
+app.post('/categories', async (req, res) => {
+  const category = new Category(req.body);
+  try {
+    // Save the new category
+    const newCategory = await category.save();
+
+    // If this category has a parent, add this category to the parent's children
+    if (newCategory.parent) {
+      const parentCategory = await Category.findOne({ name: newCategory.parent });
+      parentCategory.children.push(newCategory.name);
+      await parentCategory.save();
+    }
+
+    res.send('Category created!');
+  } catch (err) {
+    res.status(500).send('Failed to create category: ' + err.message);
+  }
+});
+
+app.get('/categories', (req, res) => {
+  Category.find()
+    .then(categories => {
+      res.json(categories);
+    })
+    .catch(err => {
+      res.send('Failed to fetch categories:', err);
+    });
+});
+
 
 
 

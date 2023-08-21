@@ -7,7 +7,7 @@ const itemSchema = new mongoose.Schema({
   photos: [String],
   description: String,
   price: Number,
-  
+  category: [String],
   
 });
 

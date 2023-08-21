@@ -1,0 +1,91 @@
+.listingContainer {
+  width: 80%;
+  min-width: 400px;
+  margin: 0 auto;
+  height: max(30%, 200px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.listingItems {
+  width: 100%;
+  height: 150px;
+  display: flex-block;
+  /* items will wrap to the next row if there's no space */
+  justify-content: center;
+  align-items: center;
+}
+.listingItem {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 150px;
+  margin: 10px;                /* Some margin to space items out */
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+}
+.listingImageWrapper {
+  display: block;
+ 
+  height: 150px;
+  overflow: hidden;
+  border-radius: 5px 0 0 5px;
+}
+
+.listingImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.listingDetails {
+  width: 100%;
+  height: 100%;
+  flex-grow: 1;
+  margin: 5px;
+  display: flex;
+}
+
+.listingText {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  margin-right: 5px;
+  justify-content: space-between;
+}
+
+.listingName {
+  margin-top: 0px;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.listingDescription {
+  margin-top: 0px;
+  font-size: 0.7rem;
+}
+
+.listingRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.listingPrice {
+  margin-top: 0px;
+  font-weight: bold;
+}
+
+.listingCity {
+  margin: 0;
+  font-size: 0.9rem;
+}

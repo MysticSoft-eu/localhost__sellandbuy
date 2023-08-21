@@ -1,0 +1,67 @@
+/* AddItem.css */
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  form {
+    width: 80%;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin: auto;
+  }
+  
+  form h1 {
+    font-size: 2em;
+    margin-bottom: 1em;
+    text-align: center;
+  }
+  
+  form label {
+    display: block;
+    margin-bottom: 1em;
+  }
+  
+  form label input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+  }
+  
+  form label input[type='text'] {
+    display: block;
+    margin-top: 0.5em;
+  }
+  
+  form label input[type='number'] {
+    display: block;
+    margin-top: 0.5em;
+  }
+  
+ 
+  form button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background: #242424;
+    color: white;
+    border-radius: 4px;
+    font-size: 1em;
+    margin-top: 1em;
+  }
+  
+  form button:hover {
+    background: #3e3e3e;
+  }
+  

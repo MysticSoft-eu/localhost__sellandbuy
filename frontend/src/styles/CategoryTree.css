@@ -1,0 +1,93 @@
+/* Basic styling and setup */
+
+
+.main {
+  
+    margin-left: 10px ;
+    
+    width: 170px;
+}
+
+
+
+/* Header styles */
+.dropdown-header {
+    font-size: 15px;
+    width: 130px;
+    height: 30px;
+    padding: 5px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+/* Styles for the dropdown list when it's open */
+.dropdown-list {
+    border-radius: 5px;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+   
+    border-top: none;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+    display: none;
+   /* Initially hide the dropdown */
+}
+
+.dropdown-container.open .dropdown-list {
+    display: block; /* Displayed when .open class is added to parent */
+   
+    min-width: 130px;
+   
+   
+ 
+    width: auto;
+}
+
+/* Individual category items */
+.dropdown-list li {
+    list-style-type: none;
+    background-color: #f8f9fa;
+    width: 100%; 
+}
+
+
+/* Category name which is clickable for expansion */
+.dropdown-list li > div {
+    display: inline-block;
+    min-width: 80px; /* Give some space for the checkbox */
+    padding-right: 10px;
+    width: auto;
+    cursor: pointer;
+  
+    background-color: #f8f9fa;
+   border-bottom: 2px solid #ffffff;
+}
+
+/* Checkbox styling */
+.dropdown-list input[type="checkbox"] {
+    
+   
+    vertical-align: middle;
+    margin-right: 10px;
+    position: relative;
+    padding: 0;
+    width: 15px; /* Set the checkbox width */
+    height: 15px; /* Set the checkbox height */
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+    user-select: none; 
+    border: 2px solid #666;
+    background-color: #fff;
+    border-radius: 4px; /* Add a slight rounded corner */
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+/* Selected categories display styling */
+.App > div:last-child {
+    margin-top: 10px;
+    font-weight: bold;
+}

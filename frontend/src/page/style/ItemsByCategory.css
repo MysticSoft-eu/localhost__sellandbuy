@@ -1,0 +1,114 @@
+.listing-container {
+  width: 80%;
+  min-width: 400px;
+  margin: 0 auto;
+  height: max(30%, 200px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.listing-items {
+    width: 100%;
+    height: 150px;
+    display: flex-block;
+    /* items will wrap to the next row if there's no space */
+    justify-content: center;
+    align-items: center;
+}
+.listing-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 150px;
+    margin: 10px;                /* Some margin to space items out */
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+}
+.listing-image-wrapper {
+  width:400px;
+  height: 100px;
+  overflow: hidden;
+  border-radius: 5px 0 0 5px;
+}
+
+.listing-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.listing-details {
+  width: 100%;
+  height: 100%;
+  flex-grow: 1;
+  margin: 5px;
+  display: flex;
+}
+
+.listing-text {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  margin-right: 5px;
+  justify-content: space-between;
+}
+
+.listing-name {
+  margin-top: 0px;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.listing-description {
+  margin-top: 0px;
+  font-size: 0.7rem;
+}
+
+.listing-right{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.listing-price {
+  margin-top: 0px;
+  font-weight: bold;
+}
+
+.listing-city{
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+  
+  .search-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+    margin: 0 auto;
+  }
+  
+  .search-input {
+    flex-grow: 1;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .search-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+  }
+  

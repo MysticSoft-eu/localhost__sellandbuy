@@ -1,0 +1,98 @@
+/* global.css */
+.label {
+  /* style definitions for label */
+  display: block;
+  text-align: center;
+}
+
+.title {
+  text-align: center;
+  font-size: 24px; /* example font-size */
+  
+}
+
+.heading {
+  text-align: center;
+  font-size: 28px; /* example font-size */
+  margin: 0px;
+}
+.container{
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  min-height: 200px; ;
+  width: 100%;
+  padding: 0 20px;
+}
+.place{
+  display: block;
+  text-align: center;
+  border-radius: 2ch; 
+  margin: 0 auto;
+  min-height: 200px; ;
+  width: 100%;
+  padding: 0 20px;
+  background-color: #ffecec;
+}
+.dragging {
+  border: 1px solid black; 
+  display: block;
+  text-align: center;
+  min-height: 200px; ;
+  width: 100%;
+  background-color: #d8cece;
+  border: 2px dashed #aaa;
+}
+.fileInput {
+  display: none;
+}
+
+.label {
+  margin-top: 10px;
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #242424; /* or any color you like */
+  color: #FFF;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.label:hover {
+  background-color:#3e3e3e; /* slightly darker blue */
+}
+.imageContainer {
+  width: 200px; /* size of button */
+  height: 200px; 
+  position: relative; /* required for absolute positioning of child elements */
+  display: inline-block; /* allow multiple photos side by side */
+}
+img {
+  padding:10px ;
+  padding-bottom: 0px;
+  width: 100%; /* size of button */
+  height: 100%; 
+  object-fit: cover; /* scale image to fit container */
+  border-radius: 10%; /* make image round */
+}
+
+.deleteButton {
+  margin: 0;
+  position: absolute;
+  top: 0; 
+  right: 0;
+  background-color: rgb(64, 8, 8); /* for visibility */
+  border: none;
+  border-radius: 10%; /* makes the button round */
+  width: 40px; /* size of button */
+  height: 40px; 
+  cursor: pointer;
+  font-size: 26px; /* adjust as needed */
+  display: flex;
+  justify-content: center; /* dla poziomego wyśrodkowania */
+  align-items: center;
+}
+
