@@ -6,6 +6,7 @@ import { useContext } from "react";
 import { UserContext } from "../UserContext";
 const Navbar = () => {
   const {user} = useContext(UserContext);
+  const userId = user?._id;
   return (
     <div className={styles.navbar}>
       <Link to="/" >
@@ -14,7 +15,7 @@ const Navbar = () => {
   </Link>
       
       <div className={styles.icons}>
-        <Link to="/messages" className={styles.iconLink}>
+        <Link to={`/chatpage` } className={styles.iconLink}>
           <FaEnvelope className={styles.icon} />
         </Link>
         <Link to="/cart" className={styles.iconLink}>

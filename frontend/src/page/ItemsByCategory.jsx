@@ -15,7 +15,7 @@ export default function ItemsByCategory() {
   const [selected, setSelected] = useState([]);
   const [products, setProducts] = useState([]);
   const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(20000);
+  const [maxPrice, setMaxPrice] = useState('');
 const [sortOption, setSortOption] = useState('');
   const navigate = useNavigate();
 
@@ -53,7 +53,7 @@ const fetchItems = async () => {
   if (minPrice > 0) {
       params.push(`minPrice=${minPrice}`);
   }
-  if (maxPrice < 1000000000) {  // Assuming 1000 is your default max
+  if (maxPrice < 100000000) {  // Assuming 1000 is your default max
       params.push(`maxPrice=${maxPrice}`);
   }
 
@@ -93,9 +93,9 @@ const fetchItems = async () => {
 
 
   return (
-    <div>
+    <div className='body'>
       <div className="search-container">
-      <input 
+         <input 
                     type="text" 
                     value={inputValue}   // <-- Bind the input to inputValue
                     onChange={e => setInputValue(e.target.value)} 
@@ -105,67 +105,60 @@ const fetchItems = async () => {
                 
                 <Link to={`/category/${category}${inputValue ? `/${inputValue}` : `/all`}${city ? `/${city}` : ''}`} >
 
-<button onClick={handleInput} className="search-button">
-  <FaSearch />
-</button>
+                          <button onClick={handleInput} className="search-button">
+                           <FaSearch />
+                          </button>
 
-</Link>
-<input 
+                           </Link>
+                         <input 
                     type="text" 
                     value={city}   // <-- Bind the input to inputValue
                     onChange={e => setCity(e.target.value)} 
                     placeholder="city..."
                     className="city-input"
                 />
-<Link to={`/category/${category}${inputValue ? `/${inputValue}` : `/all`}${city ? `/${city}` : ''}`} >
+                    <Link to={`/category/${category}${inputValue ? `/${inputValue}` : `/all`}${city ? `/${city}` : ''}`} >
 
-<button onClick={handleInput} className="search-button">
-  <FaSearch />
-</button>
+                <button onClick={handleInput} className="search-button">
+                   <FaSearch />
+                      </button>
 
-</Link>
+                          </Link>
 
       </div>
-     <div>
-      <CategoryDropdown setSelectedCategories={setSelected} selectedCategories={selected} />
-      <div>
+     <div className="some-input" >
+      <CategoryDropdown className="caregory-input" setSelectedCategories={setSelected} selectedCategories={selected} />
+      <div className="price-input" >
             {/* Filter and Sort Controls */}
-            <div>
+            
+              <div class="item">
                 <label>Min Price:</label>
                 <input
                     type="number"
                     value={minPrice}
                     onChange={(e) => setMinPrice(e.target.value)}
-                />
-
+                /></div>
+                <div class="item">
                 <label>Max Price:</label>
                 <input
                     type="number"
                     value={maxPrice}
                     onChange={(e) => setMaxPrice(e.target.value)}
-                />
-
+                /></div>
+                <div class="item">
                 <label>Sort By:</label>
                 <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
                     <option value="asc">Price: Low to High</option>
                     <option value="desc">Price: High to Low</option>
-                </select>
-            </div>
+                </select></div>
+           
 
             
         </div>
 
             
-         </div>   
-        
-      
-      {searchQuery === 'elo' &&( 
-          <div >
-          elo
-         </div>
-        )}
-  
-      <h1>{category}</h1>
+         </div>  
+         
       <div className="listing-container">
         <div className="listing-items">
           {listings.map((listing) => (

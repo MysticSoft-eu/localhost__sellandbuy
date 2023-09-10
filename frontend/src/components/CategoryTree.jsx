@@ -49,7 +49,7 @@ export default function CategoryDropdown({ setSelectedCategories, selectedCatego
                 <div className="dropdown-header">Select Category</div>
                 <CategoryTree categories={categories} onSelect={handleCategorySelect} selected={selectedCategories} className="dropdown-list" />
             </div>
-            <div> category {selectedCategories.length > 0 ? selectedCategories[0].name : 'not select'}</div>
+            
         </div>
     );
 }

@@ -3,7 +3,12 @@ import axios from 'axios';
 import RecursiveCategorySelector from '../components/CategorySelector.jsx';
 import PhotosUploader from '../PhotosUploader';
 import "./style/Additem.css"
+import { useContext } from "react";
+import { UserContext } from "../UserContext";
 export default function AddItem() {
+    
+
+  const {user} = useContext(UserContext);
     const [item, setItem] = useState({
         title: "",
         address: "",
@@ -12,9 +17,11 @@ export default function AddItem() {
         category: "",
         subcategory: "",
         photos: [],
+        login: "",
     });
 
     const handleSubmit = async (event) => {
+       
         event.preventDefault();
         try {
             const response = await axios.post('/additem', item);
@@ -25,7 +32,7 @@ export default function AddItem() {
     };
 
     const handleChange = (event) => {
-        setItem({ ...item, [event.target.name]: event.target.value });
+        setItem({ ...item, [event.target.name]: event.target.value, login: user.name});
     };
 
     const handleCategoryChange = (categories) => {

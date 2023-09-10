@@ -1,0 +1,46 @@
+.container {
+    display: flex;
+    height: 600px;
+}
+
+.usersPane {
+    width: 30%;
+    background-color: #f1f1f1;
+    padding: 1em;
+    overflow-y: auto;
+}
+
+.user {
+    padding: 0.5em;
+    cursor: pointer;
+}
+
+.user.active {
+    background-color: #e49090;
+}
+
+.chatPane {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+}
+
+.chatWindow {
+    flex: 1;
+    padding: 1em;
+    overflow-y: auto;
+}
+
+.chatInput {
+    padding: 1em;
+    border-top: 1px solid #ddd;
+}
+
+.chatMessage {
+    margin-bottom: 0.5em;
+}
+
+.chatMessage.You {
+    align-self: flex-end;
+    background-color: #ddd;
+}

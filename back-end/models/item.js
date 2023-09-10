@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const itemSchema = new mongoose.Schema({
   owner: {type:mongoose.Schema.Types.ObjectId, ref:'User'},
+  login:String,
   title: String,
   address: String,
   photos: [String],

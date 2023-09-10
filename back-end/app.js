@@ -8,11 +8,15 @@ const fs = require('fs');
 const path = require('path');
 const app = express();
 const Item = require('./models/item');
+const Chat = require('./models/Chat');
 const dotenv = require("dotenv");
 const User = require('./models/User');
 const multer = require('multer');
 const bodyParser = require('body-parser');
 const Category = require('./models/Category');
+const ws = require('ws');
+const Message = require('./models/Message');
+
 app.use(cors({
     origin: 'http://localhost:5173',
     credentials: true,
@@ -115,7 +119,7 @@ app.post('/upload',photosMiddleware.array('photos', 100), (req, res) => {
 
 app.post('/additem', (req, res) => {
   const {token} = req.cookies;
-  const {title, address, photos, description, price, category} = req.body;
+  const {title, address, photos, description, price, category,login} = req.body;
 
   jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
     if (err) {
@@ -131,7 +135,7 @@ app.post('/additem', (req, res) => {
         description,
         price,
         category,
-        
+        login,
       });
       res.json(itemDoc);
     
@@ -321,5 +325,144 @@ app.get('/categories', (req, res) => {
 
 
 
+app.get('/people', async (req, res) => {
+const users = await User.find({}, { name: 1, _id: 1});
+res.json(users);
+});
 
-app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`));
+
+function authenticateJWT(req, res, next) {
+  const { token } = req.cookies;
+
+  if (!token) {
+      return res.status(401).json({ error: "Token is missing" });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decodedData) => {
+      if (err) {
+          return res.status(401).json({ error: "Invalid token" });
+      }
+
+      req.userData = decodedData;  // Save the decoded data to the request for further use
+      next();  // Continue to the next middleware or route handler
+  });
+}
+app.post('/chat', authenticateJWT, async (req, res) => {
+  const { itemId } = req.body;
+  const userId = req.userData.id;
+
+  const chatuser = await Chat.find({
+      $or: [
+          { sender: userId },
+          { recipient: userId }
+      ]
+  });
+
+  if (!itemId) {
+      return res.json(chatuser);
+  }
+
+  let item = await Item.findOne({ _id: itemId });
+  if (!item) {
+      return res.json(chatuser);
+  }
+
+  let ownerId = item.owner;
+  let title = item.title;
+
+  try {
+      let chat = await Chat.findOne({ sender: userId, itemId, recipient: ownerId });
+
+      if (!chat) {
+          chat = await Chat.create({
+              sender: userId,
+              recipient: ownerId,
+              itemId,
+              title,
+          });
+          console.log(chat);
+      }
+  } catch (error) {
+      console.error(error);
+  }
+
+  return res.json(chatuser);
+});
+app.get('/message/:id', authenticateJWT, async (req, res) => {
+  const chatId = req.params.id;
+
+
+const chatuser = await Message.find({ chatId: chatId });
+  
+  console.log( chatId);
+  console.log(chatuser);
+  res.json(chatuser);
+});
+const server = app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`));
+
+const wss = new ws.WebSocketServer({ server });
+async function getChatRecipients(chatId) {
+  console.log(chatId, 'chatId');
+  const chat = await Chat.findById(chatId);
+  if (!chat) return [];
+  return [chat.sender, chat.recipient];
+}
+
+wss.on('connection', (connection, req) => {
+
+  connection.isALive = true;
+  connection.timer = setInterval(() => {
+    connection.ping();
+    connection.deathTimer = setTimeout(() => {
+      connection.isALive = false;
+      clearInterval(connection.timer);
+      connection.terminate();
+    }, 1000)
+  }, 5000)
+
+  connection.on('pong', () => {
+    clearTimeout(connection.deathTimer);
+  });
+
+  const cookies = req.headers.cookie;
+  if (cookies) {
+    const tokenCookieString = cookies.split(';').find(str => str.startsWith('token='));
+    if (tokenCookieString) {
+      const token = tokenCookieString.split('=')[1];
+      if (token) {
+        jwt.verify(token, process.env.JWT_SECRET, {}, (err, userData) => {
+          if (err) throw err;
+          const { id, name } = userData;
+          connection.id = id;
+          connection.name = name;
+          
+        });
+      }
+    }
+  }
+
+  connection.on('message', async (message) => {
+    message = JSON.parse(message.toString());
+    const {chatId, text, sender, recipient} = message;
+    connection.chatId = chatId;
+    if(chatId && text){
+      const messageDoc = await Message.create({
+        sender,
+        recipient,
+        chatId,
+        text,
+      });
+      
+      [...wss.clients]
+      .filter(c => c.chatId === chatId)
+      .forEach(c => c.send(JSON.stringify({
+        sender,
+        recipient,
+        text,
+        chatId,
+        _id: messageDoc._id,
+      })));
+    }
+  });
+  
+});

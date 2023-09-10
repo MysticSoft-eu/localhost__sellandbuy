@@ -1,36 +1,42 @@
 /* Basic styling and setup */
 
 
-.main {
-  
-    margin-left: 10px ;
-    
-    width: 170px;
+.main{
+    display: flex;
+    justify-content: center; /* wyśrodkowanie w poziomie */
+    align-items: center; 
+   
+    width: 200px;
+    height: 50px;
 }
-
-
 
 /* Header styles */
 .dropdown-header {
+    text-align: center;
+    
+    
     font-size: 15px;
     width: 130px;
-    height: 30px;
-    padding: 5px;
+    height: 25px;
+    
     background-color: #f8f9fa;
-    border-radius: 5px;
+    border: 1px solid black;
+    border-radius: 15px;
 }
 /* Styles for the dropdown list when it's open */
 .dropdown-list {
-    border-radius: 5px;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+    
    
-    border-top: none;
+    padding: 10px;
+    margin: 2px;
+    
+    
     position: absolute;
     width: 100%;
     z-index: 1;
     display: none;
+    border: 1px solid black;
+    border-radius: 15px;
    /* Initially hide the dropdown */
 }
 
@@ -39,7 +45,7 @@
    
     min-width: 130px;
    
-   
+   background-color: #f8f9fa;
  
     width: auto;
 }
@@ -47,8 +53,9 @@
 /* Individual category items */
 .dropdown-list li {
     list-style-type: none;
-    background-color: #f8f9fa;
+    
     width: 100%; 
+   
 }
 
 
@@ -59,14 +66,14 @@
     padding-right: 10px;
     width: auto;
     cursor: pointer;
-  
-    background-color: #f8f9fa;
+   border-radius: 35px;
+    
    border-bottom: 2px solid #ffffff;
 }
 
 /* Checkbox styling */
 .dropdown-list input[type="checkbox"] {
-    
+   
    
     vertical-align: middle;
     margin-right: 10px;
@@ -82,7 +89,7 @@
     user-select: none; 
     border: 2px solid #666;
     background-color: #fff;
-    border-radius: 4px; /* Add a slight rounded corner */
+    border-radius: 30px; /* Add a slight rounded corner */
     transition: border-color 0.2s, background-color 0.2s;
 }
 

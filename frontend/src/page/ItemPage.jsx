@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import  "./style/ItemPage.css";
 import { useParams } from "react-router-dom";
-
+import { Link } from "react-router-dom";
 export default function ItemPage() {
   const [item, setItem] = useState(null);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
@@ -47,8 +47,13 @@ export default function ItemPage() {
                 <div className="itemInfo">
 
                 <h2 className="itemTitle">{item.title}</h2>
-                <p className="itemDescription">{item.description}</p>
-                <p className="address">{item.address}</p>
+                <Link  to={`/chatpage/${item._id}` }>
+
+                <p className="itemDescription">user:{item.login}</p>
+                </Link>
+
+                <p className="itemDescription">Description:{item.description}</p>
+                <p className="address">City:{item.address}</p>
                 {item.price !== 0 && <p className="price">Price: {item.price}</p>}
                 {item.category && <p className="category">Category: {item.category}</p>}
                 </div>

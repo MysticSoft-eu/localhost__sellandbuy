@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/CategoryManager.css';
-
+import { useContext } from "react";
+import { UserContext } from "../UserContext";
 import PhotosUploader from '../PhotosUploader';
 
 export default function UpdateItem() {
+  const {user} = useContext(UserContext);
   const { id } = useParams();
   const [item, setItem] = useState({
     title: "",
@@ -14,6 +16,7 @@ export default function UpdateItem() {
     price: 0,
     category: [],
     photos: [],
+   login: "",
   });
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -99,7 +102,7 @@ export default function UpdateItem() {
                 type="text" 
                 name="title" 
                 value={item.title} 
-                onChange={event => setItem({ ...item, [event.target.name]: event.target.value })} 
+                onChange={event => setItem({ ...item, [event.target.name]: event.target.value, login: user.name })} 
               />
             </label>
             <label>

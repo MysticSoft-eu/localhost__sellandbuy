@@ -15,6 +15,7 @@ import UpdateItem from "./page/UpdateItem";
 import ItemPage from "./page/ItemPage";
 import CategoryManager from "./page/CategoryManager";
 import ItemsByCategory from "./page/ItemsByCategory";
+import Chat from "./page/Chat";
 axios.defaults.baseURL = 'http://127.0.0.1:3000';
 axios.defaults.withCredentials = true;
 
@@ -35,6 +36,7 @@ function App() {
         <Route path="/itempage/:id" element={<ItemPage />} />
         <Route path="/categorymanager" element={<CategoryManager />} />
         <Route path="/category/:category/:searchQuery?/:cityQuery?" element={<ItemsByCategory />} />
+        <Route path="/chatpage/:itemId?" element={<Chat />} />
 
        
 
