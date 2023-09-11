@@ -403,7 +403,10 @@ const server = app.listen(process.env.PORT, () => console.log(`Server running on
 const wss = new ws.WebSocketServer({ server });
 async function getChatRecipients(chatId) {
   console.log(chatId, 'chatId');
-  const chat = await Chat.findById(chatId);
+  const chat = await Chat.findById(chatId).catch(err => {
+    console.error('Error fetching chat:', err);
+    return null;
+  });
   if (!chat) return [];
   return [chat.sender, chat.recipient];
 }
@@ -417,29 +420,45 @@ wss.on('connection', (connection, req) => {
       connection.isALive = false;
       clearInterval(connection.timer);
       connection.terminate();
-    }, 1000)
-  }, 5000)
+    }, 1000);
+  }, 5000);
 
   connection.on('pong', () => {
     clearTimeout(connection.deathTimer);
   });
 
-  const cookies = req.headers.cookie;
-  if (cookies) {
-    const tokenCookieString = cookies.split(';').find(str => str.startsWith('token='));
-    if (tokenCookieString) {
-      const token = tokenCookieString.split('=')[1];
-      if (token) {
-        jwt.verify(token, process.env.JWT_SECRET, {}, (err, userData) => {
-          if (err) throw err;
-          const { id, name } = userData;
-          connection.id = id;
-          connection.name = name;
-          
-        });
-      }
-    }
+  if (typeof req.headers.cookie !== 'string') {
+    connection.terminate();
+    return;
   }
+
+  const tokenCookieString = req.headers.cookie.split(';').find(str => str.startsWith('token='));
+  if (!tokenCookieString) {
+    connection.terminate();
+    return;
+  }
+
+  const token = tokenCookieString.split('=')[1];
+  if (!token) {
+    connection.terminate();
+    return;
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, userData) => {
+    if (err) {
+      console.error('Error verifying JWT:', err);
+      connection.terminate();
+      return;
+    }
+    const { id, name } = userData;
+    connection.id = id;
+    connection.name = name;
+  });
+
+  connection.on('close', () => {
+    clearInterval(connection.timer);
+    console.log(`Connection closed by ${connection.id}`);
+  });
 
   connection.on('message', async (message) => {
     message = JSON.parse(message.toString());
@@ -451,8 +470,16 @@ wss.on('connection', (connection, req) => {
         recipient,
         chatId,
         text,
+      }).catch(err => {
+        console.error('Error saving message:', err);
+        return null;
       });
-      
+
+      if (!messageDoc) {
+        connection.terminate();
+        return;
+      }
+
       [...wss.clients]
       .filter(c => c.chatId === chatId)
       .forEach(c => c.send(JSON.stringify({
@@ -464,5 +491,5 @@ wss.on('connection', (connection, req) => {
       })));
     }
   });
-  
+
 });

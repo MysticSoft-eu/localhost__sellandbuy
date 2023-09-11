@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect, useContext,useRef } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { UserContext } from "../UserContext";
 import "../styles/Chat.css";
 import uniqBy from 'lodash/uniqBy';
-import { useNavigate } from 'react-router-dom';
-import { Link } from "react-router-dom";
 
 export default function Chat() {
+    const messagesEndRef = useRef(null);
+   
     const { user } = useContext(UserContext);
-    const [chats, setChats] = useState([]);
     const {itemId} = useParams();
+    const [chats, setChats] = useState([]);
     const [selectChat, setselectChat] = useState();
     const [ws, setWs] = useState(null);
     const [messages, setMessages] = useState([]);
@@ -19,6 +19,15 @@ export default function Chat() {
     const [sender, setsender] = useState('');
     const navigate = useNavigate();
     const uniqueMessages = uniqBy(messages, '_id');
+    let reconnectAttempts = 0;
+
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      };
+      useEffect(() => {
+        scrollToBottom();
+      });
 
     useEffect(() => {
         if (!selectChat) return;
@@ -60,7 +69,6 @@ export default function Chat() {
             setselectChat(chatWithItemId._id);
             setrecipient(chatWithItemId.recipient);
             setsender(chatWithItemId.sender);
-            
 
         }
         
@@ -76,19 +84,21 @@ export default function Chat() {
     }, [selectChat]);
 
     function connectTows() {
+        if (reconnectAttempts > 5) return;
         const wsConnection = new WebSocket("ws://127.0.0.1:3000");
         wsConnection.onopen = () => {
-          console.log('WebSocket connection opened');
-          console.log( selectChat );
-          wsConnection.send(JSON.stringify({ chatId: selectChat }));
+            console.log('WebSocket connection opened');
+            wsConnection.send(JSON.stringify({ chatId: selectChat }));
+            reconnectAttempts = 0;
         };
         setWs(wsConnection);
         wsConnection.addEventListener('message', handleMessage);
         wsConnection.addEventListener('close', () => {
-          console.log('WebSocket closed. Attempting to reconnect...');
-          setTimeout(() => {
-            connectTows();
-          }, 1000);
+            console.log('WebSocket closed. Attempting to reconnect...');
+            reconnectAttempts++;
+            setTimeout(() => {
+                connectTows();
+            }, 1000);
         });
     }
     
@@ -109,7 +119,6 @@ export default function Chat() {
         if (recipientId === user._id) {
             recipientId = sender;
         }
-        console.log({recipientId}, user._id,sender);
 
         const messageData = {
             text: newMessage,
@@ -118,7 +127,6 @@ export default function Chat() {
             chatId: selectChat,
         };
         
-
         ws.send(JSON.stringify(messageData));
 
         setnewMessage('');
@@ -127,37 +135,42 @@ export default function Chat() {
 
     return (
         <div className="chatPage">
-          
-       <div className="chatList">
-               {chats.map(chat => (
-             <Link 
-             key={chat._id} 
-             to={`/chatpage/${chat.itemId}`} 
-             className="chatListItem"
-             onClick={() => setselectChat(chat._id)}
-                 >
-             {chat.title}
-               </Link>
-                 ))}
+            <div className="chatList">
+                {chats.map(chat => (
+                    <Link 
+                        key={chat._id} 
+                        to={`/chatpage/${chat.itemId}`} 
+                        className="chatListItem"
+                        onClick={() => setselectChat(chat._id)}
+                    >
+                        {chat.title}
+                    </Link>
+                ))}
             </div>
             <div className="chatWindow">
-             {uniqueMessages.map(message => (
-             <div key={message._id} className="chatMessage">
-             {message.text}
-             </div>
-               ))}
+                <div className="chatMessages">
+                    {uniqueMessages.map(message => (
+                        <div key={message._id} className={`chatMessage ${message.sender === user._id ? 'sent' : 'received'}`}>
+                            <span className="messageSender">
+                           {message.sender === user._id ? 'Me:' : "User:"}
+                         </span>
+                            {message.text}
+                        </div>
+                    ))}
+                     <div ref={messagesEndRef} />
+                </div>
                 <div className="chatInputContainer">
                     <input
                         type="text"
                         value={newMessage}
                         onChange={e => setnewMessage(e.target.value)}
                         placeholder="Type a message..." />
-                </div>
-                
                     <button onClick={sendMessage}>Send</button>
-                    
-                    
+                </div>
             </div>
         </div>
     );
+    
+    
+    
 }

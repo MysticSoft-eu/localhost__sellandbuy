@@ -36,3 +36,22 @@
 .iconLink:hover .icon {
   color: #343a;
 }
+
+.iconLink  {
+text-align: center;
+  display: flex;
+  flex-direction: inline-block;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  
+  font-size: 1rem;
+  font-weight: 500;
+  gap: 0.2rem;
+  
+ }
+
+ .text {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #343a40;}

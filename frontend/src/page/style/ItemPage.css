@@ -33,23 +33,26 @@
     font-size: 16px;
     margin-bottom: 20px;
     line-height: 1.5;
+    color: #343a40;
 }
 .price {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #007bff;
+    font-size: 16px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    color: #343a40;
 }
 .address {
     font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 10px;
-    color: #555;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    color: #343a40;
 }
 /* Category styling */
 .category {
     font-size: 16px;
-    color: #777;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    color: #343a40;
 }
 /* Style for each photo */
 .photoContainer {

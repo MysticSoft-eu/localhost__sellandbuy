@@ -18,12 +18,15 @@ const Navbar = () => {
         <Link to={`/chatpage` } className={styles.iconLink}>
           <FaEnvelope className={styles.icon} />
         </Link>
-        <Link to="/cart" className={styles.iconLink}>
+        <Link  className={styles.iconLink}>
           <FaShoppingCart className={styles.icon} />
         </Link>
         <Link to={user?'account': "/login"} className={styles.iconLink}>
           <FaUserCircle className={styles.icon} />
+          <p className={styles.text} >
+
           {!!user && (user.name)}
+         </p>
         </Link>
       </div>
     </div>
